@@ -49,6 +49,7 @@ export default function AppWrapper() {
     window.location.pathname !== getRouterBasename() + '/login/callback' &&
     !window.location.pathname.startsWith(getRouterBasename() + '/invitation')
   ) {
+    console.log('=== redirect to /login ===');
     window.location.href = getRouterBasename() + '/login';
   }
   return <App />;
