@@ -617,13 +617,19 @@ async def oauth_login(provider_id: str, request: Request):
             detail=f"Provider {provider_id} not found",
         )
 
-    random = random_secret(32)
+    invitation_token = request.query_params.get("iv_token")
+    state_data = {"csrf_token": random_secret(32)}
+
+    if invitation_token is not None:
+        state_data["invitation_token"] = invitation_token
+
+    state = urllib.parse.urlencode(state_data)
 
     params = urllib.parse.urlencode(
         {
             "client_id": provider.client_id,
             "redirect_uri": f"{get_user_facing_url(request.url)}/callback",
-            "state": random,
+            "state": state,
             **provider.authorize_params,
         }
     )
@@ -631,8 +637,7 @@ async def oauth_login(provider_id: str, request: Request):
         url=f"{provider.authorize_url}?{params}",
     )
 
-    set_oauth_state_cookie(response, random)
-
+    set_oauth_state_cookie(response, state)
     return response
 
 
@@ -687,10 +692,15 @@ async def oauth_callback(
         provider_id, token, raw_user_data, default_user
     )
 
-    response = await _authenticate_user(request, user, redirect_to_callback=True)
+    try:
+        response = await _authenticate_user(request, user, redirect_to_callback=True)
+    except HTTPException as e:
+        if e.status_code == 401:
+            # Redirect to login page with error instead of returning JSON
+            return _get_oauth_redirect_error(request, e.detail)
+        raise
 
     clear_oauth_state_cookie(response)
-
     return response
 
 
