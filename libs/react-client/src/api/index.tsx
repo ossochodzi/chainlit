@@ -376,7 +376,15 @@ export class ChainlitAPI extends APIBase {
   getOAuthEndpoint(provider: string) {
     return this.buildEndpoint(`/auth/oauth/${provider}`);
   }
-  async shareThread(threadId: string, isShared: boolean): Promise<{ success: boolean }> {
+
+  getOAuthInvitationEndpoint(provider: string, invitation: string) {
+    return this.buildEndpoint(`/auth/oauth/${provider}?iv_token=${invitation}`);
+  }
+
+  async shareThread(
+    threadId: string,
+    isShared: boolean
+  ): Promise<{ success: boolean }> {
     const res = await this.put(`/project/thread/share`, {
       threadId,
       isShared

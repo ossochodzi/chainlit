@@ -5,6 +5,7 @@ import AuthCallback from 'pages/AuthCallback';
 import Element from 'pages/Element';
 import Env from 'pages/Env';
 import Home from 'pages/Home';
+import Invitation from 'pages/Invitation';
 import Login from 'pages/Login';
 import Thread from 'pages/Thread';
 
@@ -37,6 +38,10 @@ export const router = createBrowserRouter(
     {
       path: '/share/:id',
       element: <Thread />
+    },
+    {
+      path: '/invitation/:token',
+      element: <Invitation />
     },
     {
       path: '*',
