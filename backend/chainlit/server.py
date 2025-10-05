@@ -688,6 +688,10 @@ async def oauth_callback(
 
     (raw_user_data, default_user) = await provider.get_user_info(token)
 
+    decoded_once = urllib.parse.unquote(state)
+    state_params = dict(urllib.parse.parse_qsl(decoded_once))
+    raw_user_data["invitation_token"] = state_params.get("invitation_token")
+
     user = await config.code.oauth_callback(
         provider_id, token, raw_user_data, default_user
     )
