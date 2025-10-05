@@ -71,7 +71,7 @@ export default function Invitation() {
               apiClient.buildEndpoint('/favicon')
             }
             alt="Image"
-            className={`absolute inset-0 h-full w-full object-cover ${
+            className={`absolute inset-0 h-full w-full object-contain ${
               isDarkMode
                 ? config?.ui?.login_page_image_dark_filter ||
                   'brightness-[0.2] grayscale'
