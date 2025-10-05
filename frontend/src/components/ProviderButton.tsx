@@ -16,6 +16,7 @@ function capitalizeFirstLetter(string: string) {
 
 function getProviderName(provider: string) {
   switch (provider) {
+    case 'microsoft':
     case 'azure-ad':
     case 'azure-ad-hybrid':
       return 'Microsoft';
@@ -38,6 +39,7 @@ function renderProviderIcon(provider: string) {
       return <Google />;
     case 'github':
       return <GitHub />;
+    case 'microsoft':
     case 'azure-ad':
     case 'azure-ad-hybrid':
       return <Microsoft />;
