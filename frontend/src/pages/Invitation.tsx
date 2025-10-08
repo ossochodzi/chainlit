@@ -64,7 +64,7 @@ export default function Invitation() {
         </div>
       </div>
       {!config?.headerAuth ? (
-        <div className="relative hidden bg-muted lg:block overflow-hidden">
+        <div className="relative hidden bg-muted lg:block overflow-hidden login-page-side">
           <img
             src={
               config?.ui?.login_page_image ||
