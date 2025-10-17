@@ -107,7 +107,7 @@ class MessageBase(ABC):
         step_dict = self.to_dict()
         chat_context.add(self)
 
-        data_layer = get_data_layer()
+        data_layer = await get_data_layer()
         if data_layer:
             try:
                 asyncio.create_task(data_layer.update_step(step_dict))
@@ -126,7 +126,7 @@ class MessageBase(ABC):
         """
         chat_context.remove(self)
         step_dict = self.to_dict()
-        data_layer = get_data_layer()
+        data_layer = await get_data_layer()
         if data_layer:
             try:
                 asyncio.create_task(data_layer.delete_step(step_dict["id"]))
@@ -141,7 +141,7 @@ class MessageBase(ABC):
 
     async def _create(self):
         step_dict = self.to_dict()
-        data_layer = get_data_layer()
+        data_layer = await get_data_layer()
         if data_layer and not self.persisted:
             try:
                 asyncio.create_task(data_layer.create_step(step_dict))

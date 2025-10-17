@@ -11,7 +11,7 @@ _data_layer: Optional[BaseDataLayer] = None
 _data_layer_initialized = False
 
 
-def get_data_layer():
+async def get_data_layer():
     global _data_layer, _data_layer_initialized
 
     if not _data_layer_initialized:
@@ -28,7 +28,7 @@ def get_data_layer():
 
             if config.code.data_layer:
                 # When @data_layer is configured, call it to get data layer.
-                _data_layer = config.code.data_layer()
+                _data_layer = await config.code.data_layer()
             elif database_url := os.environ.get("DATABASE_URL"):
                 from .chainlit_data_layer import ChainlitDataLayer
 

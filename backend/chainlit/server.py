@@ -27,6 +27,7 @@ from fastapi import (
 )
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.security import OAuth2PasswordRequestForm
 from starlette.datastructures import URL
 from starlette.middleware.cors import CORSMiddleware
 from starlette.types import Receive, Scope, Send
@@ -177,7 +178,7 @@ async def lifespan(app: FastAPI):
                 slack_task.cancel()
                 await slack_task
 
-            if data_layer := get_data_layer():
+            if data_layer := await get_data_layer():
                 await data_layer.close()
         except asyncio.exceptions.CancelledError:
             pass
@@ -508,7 +509,7 @@ async def _authenticate_user(
         )
 
     # If a data layer is defined, attempt to persist user.
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         try:
             # await data_layer.create_user(user)
             app_user = await data_layer.get_user(user.identifier)
@@ -532,25 +533,25 @@ async def _authenticate_user(
     return response
 
 
-# @router.post("/login")
-# async def login(
-#     request: Request,
-#     response: Response,
-#     form_data: OAuth2PasswordRequestForm = Depends(),
-# ):
-#     """
-#     Login a user using the password auth callback.
-#     """
-#     if not config.code.password_auth_callback:
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST, detail="No auth_callback defined"
-#         )
+@router.post("/login")
+async def login(
+    request: Request,
+    response: Response,
+    form_data: OAuth2PasswordRequestForm = Depends(),
+):
+    """
+    Login a user using the password auth callback.
+    """
+    if not config.code.password_auth_callback:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="No auth_callback defined"
+        )
 
-#     user = await config.code.password_auth_callback(
-#         form_data.username, form_data.password
-#     )
+    user = await config.code.password_auth_callback(
+        form_data.username, form_data.password
+    )
 
-#     return await _authenticate_user(request, user)
+    return await _authenticate_user(request, user)
 
 
 @router.post("/logout")
@@ -848,7 +849,7 @@ async def project_settings(
         if s:
             starters = [it.to_dict() for it in s]
 
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
     debug_url = (
         await data_layer.build_debug_url() if data_layer and config.run.debug else None
     )
@@ -892,7 +893,7 @@ async def update_feedback(
     current_user: UserParam,
 ):
     """Update the human feedback for a particular message."""
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
     if not data_layer:
         raise HTTPException(status_code=500, detail="Data persistence is not enabled")
 
@@ -927,7 +928,7 @@ async def delete_feedback(
 ):
     """Delete a feedback."""
 
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
 
     if not data_layer:
         raise HTTPException(status_code=400, detail="Data persistence is not enabled")
@@ -946,7 +947,7 @@ async def get_user_threads(
 ):
     """Get the threads page by page."""
 
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
 
     if not data_layer:
         raise HTTPException(status_code=400, detail="Data persistence is not enabled")
@@ -973,7 +974,7 @@ async def get_thread(
     current_user: UserParam,
 ):
     """Get a specific thread."""
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
 
     if not data_layer:
         raise HTTPException(status_code=400, detail="Data persistence is not enabled")
@@ -1000,7 +1001,7 @@ async def get_shared_thread(
     contains is_shared=True. Otherwise, it returns 404 to avoid leaking existence.
     """
 
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
 
     if not data_layer:
         raise HTTPException(status_code=400, detail="Data persistence is not enabled")
@@ -1049,7 +1050,7 @@ async def get_thread_element(
     current_user: UserParam,
 ):
     """Get a specific thread element."""
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
 
     if not data_layer:
         raise HTTPException(status_code=400, detail="Data persistence is not enabled")
@@ -1152,7 +1153,7 @@ async def rename_thread(
 ):
     """Rename a thread."""
 
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
 
     if not data_layer:
         raise HTTPException(status_code=400, detail="Data persistence is not enabled")
@@ -1177,7 +1178,7 @@ async def share_thread(
 ):
     """Share or un-share a thread (author only)."""
 
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
 
     if not data_layer:
         raise HTTPException(status_code=400, detail="Data persistence is not enabled")
@@ -1229,7 +1230,7 @@ async def delete_thread(
 ):
     """Delete a thread."""
 
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
 
     if not data_layer:
         raise HTTPException(status_code=400, detail="Data persistence is not enabled")

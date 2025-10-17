@@ -71,7 +71,7 @@ def init_ws_context(session_or_sid: Union[WebsocketSession, str]) -> ChainlitCon
     return context
 
 
-def init_http_context(
+async def init_http_context(
     thread_id: Optional[str] = None,
     user: Optional[Union["User", "PersistedUser"]] = None,
     auth_token: Optional[str] = None,
@@ -93,7 +93,7 @@ def init_http_context(
     context = ChainlitContext(session)
     context_var.set(context)
 
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         if user_id := getattr(user, "id", None):
             asyncio.create_task(
                 data_layer.update_thread(thread_id=thread_id, user_id=user_id)

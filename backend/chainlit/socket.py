@@ -44,12 +44,12 @@ def restore_existing_session(sid, session_id, emit_fn, emit_call_fn):
 
 
 async def persist_user_session(thread_id: str, metadata: Dict):
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         await data_layer.update_thread(thread_id=thread_id, metadata=metadata)
 
 
 async def resume_thread(session: WebsocketSession):
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
     if not data_layer or not session.user or not session.thread_id_to_resume:
         return
     thread = await data_layer.get_thread(thread_id=session.thread_id_to_resume)

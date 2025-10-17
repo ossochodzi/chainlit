@@ -317,7 +317,7 @@ class Step:
             self.streaming = False
 
         step_dict = self.to_dict()
-        data_layer = get_data_layer()
+        data_layer = await get_data_layer()
 
         if data_layer:
             try:
@@ -342,7 +342,7 @@ class Step:
         Remove a step already sent to the UI.
         """
         step_dict = self.to_dict()
-        data_layer = get_data_layer()
+        data_layer = await get_data_layer()
 
         if data_layer:
             try:
@@ -368,7 +368,7 @@ class Step:
 
         step_dict = self.to_dict()
 
-        data_layer = get_data_layer()
+        data_layer = await get_data_layer()
 
         if data_layer:
             try:

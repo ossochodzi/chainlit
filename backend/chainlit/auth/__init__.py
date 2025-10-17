@@ -62,7 +62,7 @@ async def authenticate_user(token: str = Depends(reuseable_oauth)):
             status_code=401, detail="Invalid authentication token"
         ) from e
 
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         # Get or create persistent user if we've a data layer available.
         # try:
         #     persisted_user = await data_layer.get_user(user.identifier)

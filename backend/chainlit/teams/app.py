@@ -161,7 +161,7 @@ async def get_user(teams_user: ChannelAccount):
 
     users_by_teams_id[teams_user.id] = user
 
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         try:
             persisted_user = await data_layer.create_user(user)
             if persisted_user:
@@ -283,7 +283,7 @@ async def process_teams_message(
     if on_chat_end := config.code.on_chat_end:
         await on_chat_end()
 
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         if isinstance(user, PersistedUser):
             try:
                 await data_layer.update_thread(
@@ -308,7 +308,7 @@ async def handle_message(turn_context: TurnContext):
                 0 if turn_context.activity.text == "dislike" else 1
             )
             step_id = turn_context.activity.value.get("step_id")
-            if data_layer := get_data_layer():
+            if data_layer := await get_data_layer():
                 await data_layer.upsert_feedback(
                     Feedback(forId=step_id, value=feedback_value)
                 )

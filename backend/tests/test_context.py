@@ -40,7 +40,7 @@ async def test_init_ws_context(mock_websocket_session):
 
 
 async def test_init_http_context():
-    context = init_http_context()
+    context = await init_http_context()
     assert isinstance(context, ChainlitContext)
     assert isinstance(context.session, HTTPSession)
     assert isinstance(context.emitter, BaseChainlitEmitter)
@@ -50,6 +50,6 @@ async def test_get_context():
     with pytest.raises(ChainlitContextException):
         get_context()
 
-    init_http_context()  # Initialize a context
+    await init_http_context()  # Initialize a context
     context = get_context()
     assert isinstance(context, ChainlitContext)

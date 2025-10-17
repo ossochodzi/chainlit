@@ -33,7 +33,7 @@ class FeedbackView(View):
 
     @discord.ui.button(label="👎")
     async def thumbs_down(self, interaction: discord.Interaction, button: Button):
-        if data_layer := get_data_layer():
+        if data_layer := await get_data_layer():
             try:
                 feedback = Feedback(forId=self.step_id, value=0)
                 await data_layer.upsert_feedback(feedback)
@@ -45,7 +45,7 @@ class FeedbackView(View):
 
     @discord.ui.button(label="👍")
     async def thumbs_up(self, interaction: discord.Interaction, button: Button):
-        if data_layer := get_data_layer():
+        if data_layer := await get_data_layer():
             try:
                 feedback = Feedback(forId=self.step_id, value=1)
                 await data_layer.upsert_feedback(feedback)
@@ -106,7 +106,7 @@ class DiscordEmitter(BaseChainlitEmitter):
         if is_empty_output or not is_message:
             return
         else:
-            enable_feedback = get_data_layer()
+            enable_feedback = await get_data_layer()
             message = await self.channel.send(step_dict["output"])
 
             if enable_feedback:
@@ -160,7 +160,7 @@ async def get_user(discord_user: Union[discord.User, discord.Member]):
 
     users_by_discord_id[discord_user.id] = user
 
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         try:
             persisted_user = await data_layer.create_user(user)
             if persisted_user:
@@ -275,7 +275,7 @@ async def process_discord_message(
     if on_chat_end := config.code.on_chat_end:
         await on_chat_end()
 
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         user_id = None
         if isinstance(user, PersistedUser):
             user_id = user.id if bind_thread_to_user else None

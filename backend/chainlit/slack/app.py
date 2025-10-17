@@ -70,7 +70,7 @@ class SlackEmitter(BaseChainlitEmitter):
         if is_empty_output or not is_assistant_message:
             return
 
-        enable_feedback = get_data_layer()
+        enable_feedback = await get_data_layer()
         blocks: List[Dict] = [
             {
                 "type": "section",
@@ -186,7 +186,7 @@ async def get_user(slack_user_id: str):
 
     users_by_slack_id[slack_user_id] = user
 
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         try:
             persisted_user = await data_layer.create_user(user)
             if persisted_user:
@@ -324,7 +324,7 @@ async def process_slack_message(
     if on_chat_end := config.code.on_chat_end:
         await on_chat_end()
 
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         user_id = None
         if isinstance(user, PersistedUser):
             user_id = user.id if bind_thread_to_user else None
@@ -376,7 +376,7 @@ async def thumb_down(ack, context, body):
     thread_ts = body["message"]["thread_ts"]
     thread_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, thread_ts))
 
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         feedback = Feedback(forId=step_id, value=0, threadId=thread_id)
         await data_layer.upsert_feedback(feedback)
 
@@ -404,7 +404,7 @@ async def thumb_up(ack, context, body):
     thread_ts = body["message"]["thread_ts"]
     thread_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, thread_ts))
 
-    if data_layer := get_data_layer():
+    if data_layer := await get_data_layer():
         feedback = Feedback(forId=step_id, value=1, threadId=thread_id)
         await data_layer.upsert_feedback(feedback)
 

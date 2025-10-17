@@ -4,7 +4,7 @@ from chainlit.data import get_data_layer
 
 
 async def is_thread_author(username: str, thread_id: str):
-    data_layer = get_data_layer()
+    data_layer = await get_data_layer()
     if not data_layer:
         raise HTTPException(status_code=400, detail="Data layer not initialized")
 

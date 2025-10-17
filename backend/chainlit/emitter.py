@@ -226,7 +226,7 @@ class ChainlitEmitter(BaseChainlitEmitter):
         return self.emit(event, {})
 
     async def flush_thread_queues(self, interaction: str):
-        if data_layer := get_data_layer():
+        if data_layer := await get_data_layer():
             if isinstance(self.session.user, PersistedUser):
                 user_id = self.session.user.id
             else:
@@ -344,7 +344,7 @@ class ChainlitEmitter(BaseChainlitEmitter):
                     ]
                     final_res = files
                     interaction = ",".join([file["name"] for file in files])
-                    if get_data_layer():
+                    if await get_data_layer():
                         coros = [
                             File(
                                 id=file["id"],
