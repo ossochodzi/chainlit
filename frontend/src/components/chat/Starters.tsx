@@ -3,6 +3,8 @@ import { useMemo } from 'react';
 
 import { useChatSession, useConfig } from '@chainlit/react-client';
 
+import { Translator } from 'components/i18n';
+
 import Starter from './Starter';
 
 interface Props {
@@ -28,13 +30,26 @@ export default function Starters({ className }: Props) {
   if (!starters?.length) return null;
 
   return (
-    <div
-      id="starters"
-      className={cn('flex gap-2 justify-center flex-wrap', className)}
-    >
-      {starters?.map((starter, i) => (
-        <Starter key={i} starter={starter} />
-      ))}
+    <div>
+      <div
+        id="starters"
+        className={cn('lex flex-col items-center gap-2', className)}
+      >
+        <div className="text-center mb-4">
+          <p className="font-bold text-muted-foreground">
+            <Translator path="chat.starters.heading" />
+          </p>
+          <p className="italic text-sm text-muted-foreground">
+            <Translator path="chat.starters.note" />
+          </p>
+        </div>
+
+        <div className="flex gap-2 justify-center flex-wrap">
+          {starters?.map((starter, i) => (
+            <Starter key={i} starter={starter} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

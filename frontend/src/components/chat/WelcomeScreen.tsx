@@ -17,6 +17,7 @@ import {
 
 import { Logo } from '@/components/Logo';
 import { Markdown } from '@/components/Markdown';
+import { Translator } from 'components/i18n';
 
 import MessageComposer from './MessageComposer';
 import Starters from './Starters';
@@ -70,7 +71,7 @@ export default function WelcomeScreen(props: Props) {
       }
     }
 
-    return <Logo className="w-[200px] mb-2" />;
+    return <Logo className="w-[200px]" />;
   }, [chatProfiles, chatProfile]);
 
   if (hasMessage(messages)) return null;
@@ -83,7 +84,21 @@ export default function WelcomeScreen(props: Props) {
         isVisible && 'opacity-100'
       )}
     >
-      {logo}
+      <div className="flex flex-col items-center justify-center">
+        {logo}
+        <div
+          className="welcome-text mb-4"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            textDecoration: 'none'
+          }}
+        >
+          <div className="font-bold text-muted-foreground">
+            <Translator path="chat.welcome" />
+          </div>
+        </div>
+      </div>
       <MessageComposer {...props} />
       <Starters />
     </div>
