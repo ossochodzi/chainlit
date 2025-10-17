@@ -4,7 +4,6 @@ from fastapi import Depends, HTTPException
 
 from chainlit.config import config
 from chainlit.data import get_data_layer
-from chainlit.logger import logger
 from chainlit.oauth_providers import get_configured_oauth_providers
 
 from .cookie import (
@@ -65,15 +64,17 @@ async def authenticate_user(token: str = Depends(reuseable_oauth)):
 
     if data_layer := get_data_layer():
         # Get or create persistent user if we've a data layer available.
-        try:
-            persisted_user = await data_layer.get_user(user.identifier)
-            # if persisted_user is None:
-            #     persisted_user = await data_layer.create_user(user)
-            assert persisted_user
-        except Exception as e:
-            logger.exception("Unable to get persisted_user from data layer: %s", e)
-            return user
-
+        # try:
+        #     persisted_user = await data_layer.get_user(user.identifier)
+        #     if persisted_user is None:
+        #         persisted_user = await data_layer.create_user(user)
+        #     assert persisted_user
+        # except Exception as e:
+        #     logger.exception("Unable to get persisted_user from data layer: %s", e)
+        #     return user
+        persisted_user = await data_layer.get_user(user.identifier)
+        if persisted_user is None:
+            raise HTTPException(status_code=401, detail="Unknown user")
         if user and user.display_name:
             # Copy ephemeral display_name from authenticated user to persistent user.
             persisted_user.display_name = user.display_name
