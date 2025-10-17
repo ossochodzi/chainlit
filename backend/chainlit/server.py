@@ -27,7 +27,6 @@ from fastapi import (
 )
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
-from fastapi.security import OAuth2PasswordRequestForm
 from starlette.datastructures import URL
 from starlette.middleware.cors import CORSMiddleware
 from starlette.types import Receive, Scope, Send
@@ -511,7 +510,14 @@ async def _authenticate_user(
     # If a data layer is defined, attempt to persist user.
     if data_layer := get_data_layer():
         try:
-            await data_layer.create_user(user)
+            # await data_layer.create_user(user)
+            app_user = await data_layer.get_user(user.identifier)
+            if not app_user:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="credentialssignin",
+                )
+
         except Exception as e:
             # Catch and log exceptions during user creation.
             # TODO: Make this catch only specific errors and allow others to propagate.
@@ -526,25 +532,25 @@ async def _authenticate_user(
     return response
 
 
-@router.post("/login")
-async def login(
-    request: Request,
-    response: Response,
-    form_data: OAuth2PasswordRequestForm = Depends(),
-):
-    """
-    Login a user using the password auth callback.
-    """
-    if not config.code.password_auth_callback:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="No auth_callback defined"
-        )
+# @router.post("/login")
+# async def login(
+#     request: Request,
+#     response: Response,
+#     form_data: OAuth2PasswordRequestForm = Depends(),
+# ):
+#     """
+#     Login a user using the password auth callback.
+#     """
+#     if not config.code.password_auth_callback:
+#         raise HTTPException(
+#             status_code=status.HTTP_400_BAD_REQUEST, detail="No auth_callback defined"
+#         )
 
-    user = await config.code.password_auth_callback(
-        form_data.username, form_data.password
-    )
+#     user = await config.code.password_auth_callback(
+#         form_data.username, form_data.password
+#     )
 
-    return await _authenticate_user(request, user)
+#     return await _authenticate_user(request, user)
 
 
 @router.post("/logout")
@@ -587,18 +593,21 @@ async def jwt_auth(request: Request):
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
-@router.post("/auth/header")
-async def header_auth(request: Request):
-    """Login a user using the header_auth_callback."""
-    if not config.code.header_auth_callback:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No header_auth_callback defined",
-        )
+# TODO: separate authenticate and create user
 
-    user = await config.code.header_auth_callback(request.headers)
 
-    return await _authenticate_user(request, user)
+# @router.post("/auth/header")
+# async def header_auth(request: Request):
+#     """Login a user using the header_auth_callback."""
+#     if not config.code.header_auth_callback:
+#         raise HTTPException(
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#             detail="No header_auth_callback defined",
+#         )
+
+#     user = await config.code.header_auth_callback(request.headers)
+
+#     return await _authenticate_user(request, user)
 
 
 @router.get("/auth/oauth/{provider_id}")
@@ -869,6 +878,9 @@ async def project_settings(
             "chatProfiles": profiles,
             "starters": starters,
             "debugUrl": debug_url,
+            "subscriptionApiUrl": os.environ.get(
+                "CHAINLIT_SUBSCRIPTION_API_URL"
+            ),  # TODO:
         }
     )
 

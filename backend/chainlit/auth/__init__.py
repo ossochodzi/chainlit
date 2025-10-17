@@ -67,9 +67,9 @@ async def authenticate_user(token: str = Depends(reuseable_oauth)):
         # Get or create persistent user if we've a data layer available.
         try:
             persisted_user = await data_layer.get_user(user.identifier)
-            if persisted_user is None:
-                persisted_user = await data_layer.create_user(user)
-                assert persisted_user
+            # if persisted_user is None:
+            #     persisted_user = await data_layer.create_user(user)
+            assert persisted_user
         except Exception as e:
             logger.exception("Unable to get persisted_user from data layer: %s", e)
             return user
