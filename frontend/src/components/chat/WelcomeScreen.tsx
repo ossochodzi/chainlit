@@ -87,7 +87,7 @@ export default function WelcomeScreen(props: Props) {
       <div className="flex flex-col items-center justify-center">
         {logo}
         <div
-          className="welcome-text mb-4"
+          className="welcome-text -mt-4 mb-4"
           style={{
             display: 'flex',
             alignItems: 'center',

@@ -3,6 +3,7 @@ export interface IStarter {
   message: string;
   icon?: string;
   command?: string;
+  metadata?: Record<string, any>;
 }
 
 export interface ChatProfile {
@@ -88,4 +89,5 @@ export interface IChainlitConfig {
   chatProfiles: ChatProfile[];
   starters?: IStarter[];
   translation: object;
+  subscriptionApiUrl: string;
 }

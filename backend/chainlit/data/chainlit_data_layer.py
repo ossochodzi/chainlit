@@ -668,5 +668,5 @@ class ChainlitDataLayer(BaseDataLayer):
         await self.cleanup()
 
 
-def truncate(text: Optional[str], max_length: int = 255) -> Optional[str]:
+def truncate(text: Optional[str], max_length: int = 128) -> Optional[str]:
     return None if text is None else text[:max_length]

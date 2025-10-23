@@ -37,7 +37,7 @@ export default function Starter({ starter }: StarterProps) {
       type: 'user_message',
       output: starter.message,
       createdAt: new Date().toISOString(),
-      metadata: { location: window.location.href }
+      metadata: { ...starter.metadata, location: window.location.href }
     };
 
     sendMessage(message, []);
