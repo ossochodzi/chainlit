@@ -295,7 +295,7 @@ class Starter(DataClassJsonMixin):
     message: str
     command: Optional[str] = None
     icon: Optional[str] = None
-    metadata: Optional[str] = None
+    metadata: Optional[dict] = None
 
 
 @dataclass
