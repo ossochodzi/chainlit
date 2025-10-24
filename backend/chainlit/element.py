@@ -70,6 +70,8 @@ class ElementDict(TypedDict, total=False):
 class Element:
     # Thread id
     thread_id: str = Field(default_factory=lambda: context.session.thread_id)
+    # User id
+    user_id: str = Field(default_factory=lambda: context.session.user.id)
     # The type of the element. This will be used to determine how to display the element in the UI.
     type: ClassVar[ElementType]
     # Name of the element, this will be used to reference the element in the UI.

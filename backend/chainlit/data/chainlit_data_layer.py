@@ -191,7 +191,12 @@ class ChainlitDataLayer(BaseDataLayer):
         elif not element.url:
             raise ValueError("Element url, path or content must be provided")
 
-        if element.thread_id:
+        if element.user_id:
+            if element.thread_id:
+                path = f"users/{element.user_id}/threads/{element.thread_id}/files/{element.id}"
+            else:
+                path = f"users/{element.user_id}/files/{element.id}"
+        elif element.thread_id:
             path = f"threads/{element.thread_id}/files/{element.id}"
         else:
             path = f"files/{element.id}"
