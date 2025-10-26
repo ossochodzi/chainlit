@@ -271,7 +271,10 @@ class ChainlitEmitter(BaseChainlitEmitter):
 
         if not self.session.has_first_interaction:
             self.session.has_first_interaction = True
-            asyncio.create_task(self.init_thread(message.content))
+            if message.metadata and "name" in message.metadata:
+                asyncio.create_task(self.init_thread(message.metadata["name"]))
+            else:
+                asyncio.create_task(self.init_thread(message.content))
 
         if file_refs:
             files = [
