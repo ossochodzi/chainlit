@@ -1,6 +1,6 @@
-// import { useState } from 'react';
 import capitalize from 'lodash/capitalize';
 import { LogOut } from 'lucide-react';
+import { useState } from 'react';
 
 import { useAuth } from '@chainlit/react-client';
 
@@ -14,12 +14,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-// import { PlansSelector } from 'components/Plans';
+import { PlansSelector } from 'components/Plans';
 import { Translator } from 'components/i18n';
 
 export default function UserNav() {
   const { user, logout } = useAuth();
-  // const [plansModalOpen, setPlansModalOpen] = useState(false);
+  const [plansModalOpen, setPlansModalOpen] = useState(false);
 
   if (!user) return null;
   const displayName = user?.display_name || user?.identifier;
@@ -58,17 +58,17 @@ export default function UserNav() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* <Button
-          id="user-nav-plan-button"
-          variant="outline"
-          className=" h-8"
-          onClick={()=> setPlansModalOpen(true)}
-        >
-          <Translator path="navigation.user.action.extend" /> 
-        </Button>       */}
+          <Button
+            id="user-nav-plan-button"
+            variant="outline"
+            className=" h-8"
+            onClick={() => setPlansModalOpen(true)}
+          >
+            <Translator path="navigation.user.action.extend" />
+          </Button>
         </div>
       </div>
-      {/* <PlansSelector open={plansModalOpen} /> */}
+      <PlansSelector open={plansModalOpen} onOpenChange={setPlansModalOpen} />
     </>
   );
 }

@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
+  SubscribeAPI,
+  SubscriptionContext,
   useApi,
   useAuth,
   useChatInteract,
@@ -13,7 +15,7 @@ import {
 export default function AppWrapper() {
   const [translationLoaded, setTranslationLoaded] = useState(false);
   const { isAuthenticated, isReady } = useAuth();
-  const { language: languageInUse } = useConfig();
+  const { language: languageInUse, config } = useConfig();
   const { i18n } = useTranslation();
   const { windowMessage } = useChatInteract();
 
@@ -52,5 +54,14 @@ export default function AppWrapper() {
     console.log('=== redirect to /login ===');
     window.location.href = getRouterBasename() + '/login';
   }
-  return <App />;
+
+  return config?.subscriptionApiUrl ? (
+    <SubscriptionContext.Provider
+      value={new SubscribeAPI(config.subscriptionApiUrl, 'webapp')}
+    >
+      <App />
+    </SubscriptionContext.Provider>
+  ) : (
+    <App />
+  );
 }

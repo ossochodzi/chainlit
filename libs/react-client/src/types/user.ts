@@ -17,4 +17,11 @@ export interface IUser {
   identifier: string;
   display_name?: string;
   metadata: IUserMetadata;
+  plan?: IUserPlan;
+}
+
+export interface IUserPlan {
+  id: string;
+  name: string;
+  metadata?: string;
 }

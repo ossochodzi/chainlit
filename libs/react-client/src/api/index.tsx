@@ -392,3 +392,67 @@ export class ChainlitAPI extends APIBase {
     return res.json();
   }
 }
+
+export interface CheckoutSessionResponse {
+  url: string;
+}
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  price: number;
+  interval: 'month' | 'year';
+  currency: string;
+  description: string;
+}
+
+export interface SubscriptionStatus {
+  planId: string;
+  status: 'active' | 'canceled' | 'incomplete' | 'past_due' | 'trialing';
+  currentPeriodEnd: string;
+  cancelAtPeriodEnd: boolean;
+}
+
+export class SubscribeAPI extends APIBase {
+  /**
+   * Fetch available plans
+   */
+  async getPlans(): Promise<SubscriptionPlan[]> {
+    const res = await this.get('/api/subscription/plans');
+    return res.json();
+  }
+
+  /**
+   * Create a checkout session for upgrading / purchasing a plan.
+   */
+  async createCheckoutSession(
+    planId: string
+  ): Promise<CheckoutSessionResponse> {
+    const res = await this.post(`/api/subscription/checkout/${planId}`, {});
+    return res.json();
+  }
+
+  /**
+   * Retrieve the billing portal URL (for managing subscriptions, invoices, etc.)
+   */
+  async getBillingPortalUrl(): Promise<{ url: string }> {
+    const res = await this.post('/api/subscription/portal', {});
+    return res.json();
+  }
+
+  /**
+   * Get current user’s active subscription status
+   */
+  async getSubscriptionStatus(): Promise<SubscriptionStatus> {
+    const res = await this.get('/api/subscription/status');
+    return res.json();
+  }
+
+  /**
+   * Cancel active subscription at period end
+   */
+  async cancelSubscription(): Promise<SubscriptionStatus> {
+    const res = await this.post('/api/subscription/cancel', {});
+    return res.json();
+  }
+}
